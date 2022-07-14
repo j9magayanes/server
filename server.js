@@ -5,8 +5,6 @@ const db = require("./db");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
 const morgan = require("morgan");
 const sql = require('mssql');
 
