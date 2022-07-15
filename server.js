@@ -48,7 +48,7 @@ app.get("/api/v1/models", async (req, res) => {
   try {
     //const results = await db.query("select * from models");
     await sql.connect(sqlConfig)
-    const modelRatingsData = await sql.query`select * from models`
+    const modelRatingsData = await sql.query`select * from price_models`
     console.log(modelRatingsData)
     res.status(200).json({
       status: "success",
@@ -68,7 +68,7 @@ app.get("/api/v1/models/:id", async (req, res) => {
   try {
     await sql.connect(sqlConfig);
     const model = await sql.query(
-      `select * from models where id = ${req.params.id}`
+      `select * from price_models where Model_Id = ${req.params.id}`
     );
     res.status(200).json({
       status: "success",
@@ -86,11 +86,23 @@ app.post("/api/v1/models", async (req, res) => {
   try {
    let pool = await sql.connect(sqlConfig)
    const result = await pool.request()
-   .input('id', sql.Int, req.body.id)
-   .input('name', sql.NVarChar, req.body.name)
-   .input('location', sql.NVarChar, req.body.location)
-   .input('price_range', sql.Int, req.body.price_range)
-   .query('INSERT INTO models (id, name, location, price_range) values (@id, @name, @location, @price_range)')
+   .input('Credit_Name', sql.NVarChar, req.body.Credit_Name)
+   .input('Source_Name', sql.NVarChar, req.body.Source_Name)
+   .input('Model_Name', sql.NVarChar, req.body.Model_Name)
+   .input('Instruction', sql.NVarChar, req.body.Instruction)
+   .input('Days_Number', sql.SmallInt, req.body.Days_Number)
+   .input('Authors_Number', sql.NVarChar, req.body.Authors_Number)
+   .input('Catergory_Name', sql.NVarChar, req.body.Category_Name)
+   .input('Price_Number', sql.Float, req.body.Price_Number)
+   .input('Currency_Name', sql.NVarChar, req.body.Currency_Name)
+   .input('Online_State', sql.NVarChar, req.body.Online_State)
+   .input('Days_Number_TV', sql.NVarChar, req.body.Days_Number_TV)
+   .input('Price_TV', sql.NVarChar, req.body.Price_TV)
+   .input('Print_State', sql.NVarChar, req.body.Print_State)
+   .input('Royalty_State', sql.NVarChar, req.body.Royalty_State)
+   .input('Visible_State', sql.NVarChar, req.body.Visible_State)
+   .input('Order_State', sql.NVarChar, req.body.Order_State)
+   .query('INSERT INTO price_models (Credit_Name, Source_Name, Model_Name, Instruction, Days_Number, Authors_Number, Catergory_Name, Price_Number, Currency_Name, Online_State, Days_Number_TV, Price_TV, TV_State, Print_State, Royalty_State, Visible_State, Order_State) values (@Credit_Name, @Source_Name, @Model_Name, @Instruction, @Days_Number, @Authors_Number, @Catergory_Name, @Price_Number, @Currency_Name, @Online_State, @Days_Number_TV, @Price_TV, @TV_State, @Print_State, @Royalty_State, @Visible_State, @Order_State )')
    res.status(200).json({
     status: "success",
     data: {
@@ -106,12 +118,24 @@ app.put("/api/v1/models/:id", async (req, res) => {
   try {
     let pool = await sql.connect(sqlConfig)
     const result = await pool.request()
-    .input('searchid', sql.Int, req.params.id)
-    .input('id', sql.Int, req.body.id)
-    .input('name', sql.NVarChar, req.body.name)
-    .input('location', sql.NVarChar, req.body.location)
-    .input('price_range', sql.Int, req.body.price_range)
-    .query('UPDATE models SET id = @id, name = @name, location = @location, price_range = @price_range where id = @searchid')
+    .input('id', sql.Int, req.params.id)
+    .input('Credit_Name', sql.NVarChar, req.body.Credit_Name)
+    .input('Source_Name', sql.NVarChar, req.body.Source_Name)
+    .input('Model_Name', sql.NVarChar, req.body.Model_Name)
+    .input('Instruction', sql.NVarChar, req.body.Instruction)
+    .input('Days_Number', sql.SmallInt, req.body.Days_Number)
+    .input('Authors_Number', sql.NVarChar, req.body.Authors_Number)
+    .input('Catergory_Name', sql.NVarChar, req.body.Category_Name)
+    .input('Price_Number', sql.Float, req.body.Price_Number)
+    .input('Currency_Name', sql.NVarChar, req.body.Currency_Name)
+    .input('Online_State', sql.NVarChar, req.body.Online_State)
+    .input('Days_Number_TV', sql.NVarChar, req.body.Days_Number_TV)
+    .input('Price_TV', sql.NVarChar, req.body.Price_TV)
+    .input('Print_State', sql.NVarChar, req.body.Print_State)
+    .input('Royalty_State', sql.NVarChar, req.body.Royalty_State)
+    .input('Visible_State', sql.NVarChar, req.body.Visible_State)
+    .input('Order_State', sql.NVarChar, req.body.Order_State)
+    .query('UPDATE price_models SET Credit_Name = @Credit_Name, Source_Name = @Source_Name, Model_Name = @Model_Name, Instruction = @Instruction, Days_Number = @Instruction, Authors_Number = @Authors_Number, Catergory_Name = @Category_Name , Price_Number = @Price_Number, Currency_Name = @Currency_Name, Online_State = @Online_State, Days_Number_TV = @Days_Number_TV, Price_TV = @Price_TV , TV_State = @TV_State, Print_State = @Print_State, Royalty_State = @Royalty_State, Visible_State = @Visible_State, Order_State = @Order_State where Model_Id = @id')
     res.status(200).json({
       status: "success",
     });
@@ -127,11 +151,7 @@ app.delete("/api/v1/models/:id", async (req, res) => {
     let pool = await sql.connect(sqlConfig)
     const result = await pool.request()
     .input('searchid', sql.Int, req.params.id)
-    .input('id', sql.Int, req.body.id)
-    .input('name', sql.NVarChar, req.body.name)
-    .input('location', sql.NVarChar, req.body.location)
-    .input('price_range', sql.Int, req.body.price_range)
-    .query('DELETE FROM models where id = @searchid')
+    .query('DELETE FROM price_models where Model_Id = @searchid')
     res.status(200).json({
       status: "success",
     });
