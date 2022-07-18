@@ -84,6 +84,7 @@ app.get("/api/v1/models/:id", async (req, res) => {
 // Create a model
 app.post("/api/v1/models", async (req, res) => {
   try {
+    console.log(req.body.Model_Name)
    let pool = await sql.connect(sqlConfig)
    const result = await pool.request()
    .input('Credit_Name', sql.NVarChar, req.body.Credit_Name)
@@ -92,17 +93,18 @@ app.post("/api/v1/models", async (req, res) => {
    .input('Instruction', sql.NVarChar, req.body.Instruction)
    .input('Days_Number', sql.SmallInt, req.body.Days_Number)
    .input('Authors_Number', sql.NVarChar, req.body.Authors_Number)
-   .input('Catergory_Name', sql.NVarChar, req.body.Category_Name)
+   .input('Category_Name', sql.NVarChar, req.body.Category_Name)
    .input('Price_Number', sql.Float, req.body.Price_Number)
    .input('Currency_Name', sql.NVarChar, req.body.Currency_Name)
    .input('Online_State', sql.NVarChar, req.body.Online_State)
    .input('Days_Number_TV', sql.NVarChar, req.body.Days_Number_TV)
    .input('Price_TV', sql.NVarChar, req.body.Price_TV)
+   .input('TV_State', sql.NVarChar, req.body.TV_State)
    .input('Print_State', sql.NVarChar, req.body.Print_State)
    .input('Royalty_State', sql.NVarChar, req.body.Royalty_State)
    .input('Visible_State', sql.NVarChar, req.body.Visible_State)
    .input('Order_State', sql.NVarChar, req.body.Order_State)
-   .query('INSERT INTO price_models (Credit_Name, Source_Name, Model_Name, Instruction, Days_Number, Authors_Number, Catergory_Name, Price_Number, Currency_Name, Online_State, Days_Number_TV, Price_TV, TV_State, Print_State, Royalty_State, Visible_State, Order_State) values (@Credit_Name, @Source_Name, @Model_Name, @Instruction, @Days_Number, @Authors_Number, @Catergory_Name, @Price_Number, @Currency_Name, @Online_State, @Days_Number_TV, @Price_TV, @TV_State, @Print_State, @Royalty_State, @Visible_State, @Order_State )')
+   .query('INSERT INTO price_models (Credit_Name, Source_Name, Model_Name, Instruction, Days_Number, Authors_Number, Category_Name, Price_Number, Currency_Name, Online_State, Days_Number_TV, Price_TV, TV_State, Print_State, Royalty_State, Visible_State, Order_State) values (@Credit_Name, @Source_Name, @Model_Name, @Instruction, @Days_Number, @Authors_Number, @Category_Name, @Price_Number, @Currency_Name, @Online_State, @Days_Number_TV, @Price_TV, @TV_State, @Print_State, @Royalty_State, @Visible_State, @Order_State )')
    res.status(200).json({
     status: "success",
     data: {
@@ -125,17 +127,18 @@ app.put("/api/v1/models/:id", async (req, res) => {
     .input('Instruction', sql.NVarChar, req.body.Instruction)
     .input('Days_Number', sql.SmallInt, req.body.Days_Number)
     .input('Authors_Number', sql.NVarChar, req.body.Authors_Number)
-    .input('Catergory_Name', sql.NVarChar, req.body.Category_Name)
+    .input('Category_Name', sql.NVarChar, req.body.Category_Name)
     .input('Price_Number', sql.Float, req.body.Price_Number)
     .input('Currency_Name', sql.NVarChar, req.body.Currency_Name)
     .input('Online_State', sql.NVarChar, req.body.Online_State)
     .input('Days_Number_TV', sql.NVarChar, req.body.Days_Number_TV)
     .input('Price_TV', sql.NVarChar, req.body.Price_TV)
+    .input('TV_State', sql.NVarChar, req.body.TV_State)
     .input('Print_State', sql.NVarChar, req.body.Print_State)
     .input('Royalty_State', sql.NVarChar, req.body.Royalty_State)
     .input('Visible_State', sql.NVarChar, req.body.Visible_State)
     .input('Order_State', sql.NVarChar, req.body.Order_State)
-    .query('UPDATE price_models SET Credit_Name = @Credit_Name, Source_Name = @Source_Name, Model_Name = @Model_Name, Instruction = @Instruction, Days_Number = @Instruction, Authors_Number = @Authors_Number, Catergory_Name = @Category_Name , Price_Number = @Price_Number, Currency_Name = @Currency_Name, Online_State = @Online_State, Days_Number_TV = @Days_Number_TV, Price_TV = @Price_TV , TV_State = @TV_State, Print_State = @Print_State, Royalty_State = @Royalty_State, Visible_State = @Visible_State, Order_State = @Order_State where Model_Id = @id')
+    .query('UPDATE price_models SET Credit_Name = @Credit_Name, Source_Name = @Source_Name, Model_Name = @Model_Name, Instruction = @Instruction, Days_Number = @Days_Number, Authors_Number = @Authors_Number, Category_Name = @Category_Name , Price_Number = @Price_Number, Currency_Name = @Currency_Name, Online_State = @Online_State, Days_Number_TV = @Days_Number_TV, Price_TV = @Price_TV , TV_State = @TV_State, Print_State = @Print_State, Royalty_State = @Royalty_State, Visible_State = @Visible_State, Order_State = @Order_State where Model_Id = @id')
     res.status(200).json({
       status: "success",
     });
@@ -161,6 +164,27 @@ app.delete("/api/v1/models/:id", async (req, res) => {
   }
  )
 
+ // Search
+ app.get("/api/v1/models/search/:search", async (req, res) => {
+  try {
+    //const results = await db.query("select * from models");
+    const search = req.params.search
+    console.log(search)
+    let pool = await sql.connect(sqlConfig)
+    const result = await pool.request()
+    .query`select * from price_models where Credit_Name  = ${search} union select * from price_models where Source_Name  = ${search};`
+    console.log(result)
+    res.status(200).json({
+      status: "success",
+      results: result.recordset.length,
+      data: {
+        results: result.recordset,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}); 
 
 
 // Sign up
